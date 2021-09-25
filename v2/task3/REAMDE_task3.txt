@@ -1,0 +1,17 @@
+Task 3 information:
+updated 05.04.21
+
+Purpose:    Assess whether the preferred density found in a 2AFC 
+            discrimination task generalizes and reaches peak performance
+            at the same eccentricity in a detection task.
+Goal:       Test generalizability of CPD between discrimination and 
+            detection tasks.
+
+Task:       Measured performance in yes-no detection task.
+            Observers reported target presence (yes or no).
+
+Stimuli:    4 eccentricities (0, 2.5, 5, 7.5, 10 deg)
+            1 density (preferred, as deteremined by model)
+
+Subjects:   MJ
+            NH

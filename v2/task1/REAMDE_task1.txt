@@ -1,0 +1,14 @@
+Task 1 information:
+updated 04.10.21
+
+Purpose:    Find preferred line density for peripheral stimuli. 
+Goal:       Characterize preferred line density across eccentricity.
+
+Task:       Measured performance in 2-spatial-AFC task.
+            Observers reported target location (left or right of fixation).
+
+Stimuli:    4 eccentricities (2.5, 5, 7.5, 10 deg)
+            7 densities (0.25 0.4 0.55 0.7 0.85 1 1.15 dva/row)
+
+Subjects:   MJ
+            NH
