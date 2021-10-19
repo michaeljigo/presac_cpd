@@ -36,7 +36,7 @@ function display_task1_performance(subj)
       data = resMat;
 
       % remove some blocks from analysis
-         %data(data(:,idx_block)<=3,:) = [];
+         data(data(:,idx_block)<=1,:) = [];
 
       % create trial labels for target presence (0=absent; 1=present)
          tmp_presence = data(:,idx_targecc);
@@ -64,45 +64,70 @@ function display_task1_performance(subj)
      
       % use condParser to compute behavioral metrics
          % overall
-            dprime(s).overall          = condParser(trialresp,presence);
-            dprime(s).overall          = diff(norminv(dprime(s).overall.perf),[],2);
+            allDPrime(s).overall          = condParser(trialresp,presence);
+            allDPrime(s).overall          = diff(norminv(allDPrime(s).overall.perf),[],2);
 
 
          % eccentricity 
-            dprime(s).subj             = subj{s};
-            dprime(s).targecc          = condParser(trialresp,presence,respcue); 
-            criterion(s).targecc       = dprime(s).targecc;
-            criterion(s).targecc.perf  = -0.5*(sum(norminv(dprime(s).targecc.perf),1));
-            dprime(s).targecc          = hautas_adjustment(dprime(s).targecc); % adjust for extreme probabilities
+            allDPrime(s).subj             = subj{s};
+            allDPrime(s).targecc          = condParser(trialresp,presence,respcue); 
+            allCrit(s).targecc            = allDPrime(s).targecc;
+            allCrit(s).targecc.perf       = -0.5*(sum(norminv(allDPrime(s).targecc.perf),1));
+            allDPrime(s).targecc          = hautas_adjustment(allDPrime(s).targecc); % adjust for extreme probabilities
 
 
-         % density
-            density.val                = data(:,idx_density);
-            density.label              = cellfun(@num2str,num2cell(unique(density.val)),'un',0);
-            dprime(s).density          = condParser(trialresp,presence,density);
-            dprime(s).density          = hautas_adjustment(dprime(s).density);
+         % density (or size)
+            density.val                   = data(:,idx_density);
+            density.label                 = cellfun(@num2str,num2cell(unique(density.val)),'un',0);
+            allDPrime(s).density          = condParser(trialresp,presence,density);
+
+            % if this is a size experiment (i.e., has a 2 or 3 at the end of the intials), then collapse false alarms across all sizes because target-absent trials have no indication of a different size
+               if ~isempty(strfind(subj{s},'2')) || ~isempty(strfind(subj{s},'3'))
+                  allFA       = condParser(trialresp,presence);
+                  allFA_raw   = repmat(allFA.raw(1),1,size(allDPrime(s).density.perf,2));
+                  % replace false alarm rates per size with the false alarm rate collapsed across sizes
+                     allDPrime(s).density.raw(1,:)    = allFA_raw; 
+               end
+            allDPrime(s).density          = hautas_adjustment(allDPrime(s).density);
 
 
          % density x eccentricity
-            dprime(s).density_ecc      = condParser(trialresp,presence,density,respcue);
-            dprime(s).density_ecc      = hautas_adjustment(dprime(s).density_ecc);
+            allDPrime(s).density_ecc      = condParser(trialresp,presence,density,respcue);
+
+            % if this is a size experiment (i.e., has a 2 or 3 at the end of the intials), then collapse false alarms across all sizes because target-absent trials have no indication of a different size
+               if ~isempty(strfind(subj{s},'2')) || ~isempty(strfind(subj{s},'3'))
+                  allFA       = condParser(trialresp,presence,respcue);
+                  allFA_raw   = repmat(allFA.raw(1,:),size(allDPrime(s).density.perf,2),1);
+                  % replace false alarm rates per size with the false alarm rate collapsed across sizes
+                     allDPrime(s).density_ecc.raw(1,:,:)    = allFA_raw; 
+               end
+            allDPrime(s).density_ecc      = hautas_adjustment(allDPrime(s).density_ecc);
 
 
          % bandwidth
             bw.val                     = data(:,idx_bw);
             bw.label                   = cellfun(@num2str,num2cell(unique(bw.val)),'un',0);
-            dprime(s).bw               = condParser(trialresp,presence,bw);
-            dprime(s).bw               = hautas_adjustment(dprime(s).bw);
+            allDPrime(s).bw            = condParser(trialresp,presence,bw);
+            allDPrime(s).bw            = hautas_adjustment(allDPrime(s).bw);
+
+         % bandwidth x ecc
+            allDPrime(s).bw_ecc        = condParser(trialresp,presence,bw,respcue); 
+            allDPrime(s).bw_ecc        = hautas_adjustment(allDPrime(s).bw_ecc);
 
          
       % save subject performance
-         savedir = '../../data/dprime/';
+         dprime      = allDPrime(s);
+         criterion   = allCrit(s);
+         savedir = '../data/dprime/';
          if ~exist(savedir,'dir')
             mkdir(savedir)
          end
          filename = sprintf('%s%s.mat',savedir,subj{s});
          save(filename,'dprime','criterion');
    end
+   % leave observers concatenated
+   dprime    = allDPrime;
+   criterion = allCrit;
 
    % draw rough plots of the main effects
    ylim           = [-1 3];
@@ -167,8 +192,8 @@ function display_task1_performance(subj)
 
 
       % figure 3. bandwidth
-         xlim  = [80 120];
-         xtick = 0:10:200;
+         xlim  = [40 150];
+         xtick = 0:20:200;
          ylim  = [0 3];
          ytick = 0:5;
 
@@ -186,7 +211,7 @@ function display_task1_performance(subj)
             xlabel('Bandwidth (^o)','fontname','arial','fontsize',10);
             ylabel('Sensitivity (d^{\prime})','fontname','arial','fontsize',10);
             if s==numel(dprime)
-               legend(legendlines,subj,'location','southeast');
+               legend(legendlines,subj,'location','northwest');
             end
          end
          % save figure
@@ -272,4 +297,40 @@ function display_task1_performance(subj)
                mkdir(figdir)
             end
             filename = sprintf('%secc_density.png',figdir);
+            saveas(gcf,filename);
+
+
+
+      % figure 6. bandwidth x eccentricity
+         xlim  = [0 10];
+         xtick = 0:2:10;
+         ylim  = [-0.5 5];
+         ytick = 0:8;
+         colors= linspecer(6,'qualitative');
+         clear legendlines
+
+         figure('name','bandwidth vs. eccentricity','position',[109 292 959 324]);
+         for s = 1:numel(dprime)
+            subplot(1,numel(dprime),s);
+            bwvals = dprime(s).bw.factorVals.factor2;
+            for b = 1:numel(bwvals)
+               legendlines(b) = plot(eccvals,dprime(s).bw_ecc.perf(b,:),'-','linewidth',2,'color',colors(b,:)); hold on
+               % plot individual data points at corresponding size
+                  for e = 1:numel(eccvals)
+                     plot(eccvals(e),dprime(s).bw_ecc.perf(b,e),'o','markersize',sizePerTrial*(dprime(s).bw_ecc.numtrials(b,e)./max(dprime(s).bw_ecc.numtrials(:))),'markerFaceColor',colors(b,:),'markerEdgeColor','w');
+                  end
+            end
+            figureDefaults
+            set(gca,'xlim',xlim,'ylim',ylim,'xtick',xtick,'ytick',ytick);
+            xlabel('Eccentricity (^o)','fontname','arial','fontsize',10);
+            ylabel('Sensitivity (d^{\prime})','fontname','arial','fontsize',10);
+            legend(legendlines,cellfun(@num2str,num2cell(bwvals(:)),'un',0),'location','northwest');
+            title(subj{s},'fontname','arial','fontsize',10);
+         end
+         % save figure
+            figdir = '../figures/behavior/';
+            if ~exist(figdir,'dir')
+               mkdir(figdir)
+            end
+            filename = sprintf('%sbw_ecc.png',figdir);
             saveas(gcf,filename);
