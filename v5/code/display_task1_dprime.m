@@ -63,8 +63,8 @@ function display_task1_dprime(subj)
             trialresp      = data(:,idx_resp);
 
          % size
-            sz.val                        = data(:,idx_size);
-            sz.label                      = cellfun(@num2str,num2cell(unique(sz.val)),'un',0);
+            sz.val         = data(:,idx_size);
+            sz.label       = cellfun(@num2str,num2cell(unique(sz.val)),'un',0);
 
      
 
