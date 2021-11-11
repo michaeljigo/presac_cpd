@@ -31,7 +31,7 @@ function display_task1_dprime(subj)
    %% Load subject files
    if ischar(subj), subj={subj}; end
    for s = 1:numel(subj)
-      subjdata = sprintf('../data/raw/%s_Task1_resMat.mat',subj{s});
+      subjdata = sprintf('../data/raw/task1/%s_Task1_resMat.mat',subj{s});
       load(subjdata);
       data = resMat;
 
