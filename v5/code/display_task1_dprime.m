@@ -1,4 +1,4 @@
-% Purpose:  Analyze behavioral performance for task 1 for version 4.
+% Purpose:  Analyze behavioral performance for task 1 for version 5.
 % By:       Michael Jigo
 %
 %
@@ -166,7 +166,7 @@ function display_task1_dprime(subj)
    %% Plot
       ylim           = [0 4];
       ytick          = -10:1:10;
-      xlim           = [-1 12];
+      xlim           = [-1 14];
       xtick          = 0:2:20;
       sizePerTrial   = 7;
       colors         = linspecer(numel(dprime),'qualitative'); 
@@ -237,7 +237,7 @@ function display_task1_dprime(subj)
 
 
       % figure 3. eccentricity x size (size subplots)
-         xlim  = [-1 12];
+         xlim  = [-1 14];
          xtick = 0:2:20;
          ylim  = [0 3];
          ytick = 0:8;
@@ -318,7 +318,7 @@ function display_task1_dprime(subj)
 
 
       % figure 5. bandwidth x ecc x size (size subplots; separate figures for each subject)
-         xlim  = [-1 12];
+         xlim  = [-1 14];
          xtick = 0:2:20;
          ylim  = [-0.5 4];
          ytick = 0:8;
