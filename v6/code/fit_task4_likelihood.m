@@ -14,7 +14,7 @@
 %
 % By:       Michael Jigo
 
-function fit_task1_likelihood(subj)
+function fit_task4_likelihood(subj)
    % add paths
    addpath(genpath('../../../modelCPD'));
    addpath(genpath('~/apps'));
@@ -46,7 +46,7 @@ function fit_task1_likelihood(subj)
 
    %% Load data
       % load subject data
-         subjdata = sprintf('../data/raw/task1/%s_Task1_resMat.mat',subj);
+         subjdata = sprintf('../data/raw/task4/%s_Task4_resMat.mat',subj);
          load(subjdata);
          tmp = resMat;
 
@@ -64,7 +64,7 @@ function fit_task1_likelihood(subj)
             data.trials.presence(isnan(data.trials.presence))  = 0;
 
       % add in calculated dprime
-         dprimedir = '../data/dprime/';
+         dprimedir = '../data/dprime/task4_fixation/';
          load(sprintf('%s%s.mat',dprimedir,subj));
          data.dprime = dprime;
 
@@ -75,11 +75,10 @@ function fit_task1_likelihood(subj)
       % image parameters
          linesize    = [0.1 0.3];
          pxperdeg    = 32;
-         imsize      = [5 8];
+         imsize      = [5 10];
          sizes       = data.size;
          spacing_row = 0.3;
          spacing_col = 0.3;
-         sizes = [6 10];
          
 
       % generate textures
@@ -96,7 +95,6 @@ function fit_task1_likelihood(subj)
             stim(d).target(stim(d).target>1) = 1;
             stim(d).notarg(stim(d).notarg>1) = 1;
          end
-         keyboard
 
    
       % decompose images
@@ -116,7 +114,7 @@ function fit_task1_likelihood(subj)
 
 
    %% Perform optimization
-      objective = @(params)fit_task1_objective(stimdrive,supdrive,attn,observer,data,stim,config,params);
+      objective = @(params)fit_task4_objective(stimdrive,supdrive,attn,observer,data,stim,config,params);
 
       % fitting options
          options = bads('defaults');
@@ -129,10 +127,10 @@ function fit_task1_likelihood(subj)
 
    %% Evaluate model to generate best-fitting values at finely-spaced eccentricities
       % evaluate to get model response at tested eccentricities, as well as cost and likelihood
-         [~, model, sse]   = fit_task1_objective(stimdrive,supdrive,attn,observer,data,stim,config,fit_params);
+         [~, model, sse]   = fit_task4_objective(stimdrive,supdrive,attn,observer,data,stim,config,fit_params);
       % evaluate at finely spaced eccentricities
          data.fineEcc      = min(data.ecc):0.1:max(data.ecc);
-         fineModel         = fit_task1_objective_fineSpacing(stimdrive,supdrive,attn,observer,data,stim,config,fit_params);
+         fineModel         = fit_task4_objective_fineSpacing(stimdrive,supdrive,attn,observer,data,stim,config,fit_params);
       % put best-fitting parameters in proper format
          [stimdrive supdrive attn observer config] = format_unformat_params_likelihood(config,fit_params',stimdrive,supdrive,attn,observer);
 
@@ -151,7 +149,7 @@ function fit_task1_likelihood(subj)
 
 
    %% Save file
-   savedir = '../data/fitted_parameters/task1/';
+   savedir = '../data/fitted_parameters/task4/';
    if ~exist(savedir,'dir')
       mkdir(savedir);
    end

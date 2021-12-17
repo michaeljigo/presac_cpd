@@ -1,7 +1,7 @@
 % Purpose:  Objective function for fitting behavioral performance from Task 1.
 % By:       Michael Jigo
 
-function [cost dprime sse] = fit_task1_objective(stimdrive,supdrive,attn,observer,data,stim,config,params)
+function [cost dprime sse] = fit_task4_objective(stimdrive,supdrive,attn,observer,data,stim,config,params)
 
    %% re-scale parameters
       [stimdrive supdrive attn observer config] = format_unformat_params_likelihood(config,params',stimdrive,supdrive,attn,observer);
@@ -70,3 +70,4 @@ function [cost dprime sse] = fit_task1_objective(stimdrive,supdrive,attn,observe
          mkdir(savedir);
       end
       save(sprintf('%s%s.mat',savedir,data.subj),'out');
+

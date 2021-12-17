@@ -2,6 +2,6 @@
 %
 %           THIS MUST BE RUN BEFORE TRYING ANY CODE
 
-addpath(genpath('./v3'));
+addpath(genpath('./v6'));
 addpath(genpath('/Users/jigomich/research/apps'));
 addpath(genpath('/Users/jigomich/research/nyu/modelCPD/code'));

@@ -13,6 +13,7 @@
 % Output:   exc            same as above
 
 function [stimdrive supdrive attn observer config] = format_unformat_params(config,fittedparams,stimdrive,supdrive,attn,observer)
+rng('shuffle');
 
 %% Initialize parameters
 if nargin==1

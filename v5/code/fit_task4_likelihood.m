@@ -1,59 +1,69 @@
 % Purpose:  This function will call all requisite functions to fit imAmodel (IMage-computable Attention model)
-%           to the behavioral data collected from thresholding/training session (task 1) for individual subjects.
+%           to the behavioral data collected from main experiment (task 4) for individual subjects.
 %        
 %           To simulate behavior in the detection task:
 %              - two images will be passed to the model (one with a target patch, another without)
-%              - four model parameters will be adjusted for individual subjects:
+%              - these model parameters will be adjusted for individual subjects:
 %                 1. cg_max
 %                 2. cg_slope
 %                 3. freq_max
 %                 4. freq_slope
 %                 5. bw_max
 %                 6. criterion
+%                 7. attn_freq_max
+%                 8. attn_freq_slope
+%                 9. attn_bw
+%                 10. attn_amp_max
+%                 11. attn_spread
+%                 12. attn_baseline
 %              - model discriminability between images will be matched to behavior using Maximum Likelihood Estimation
 %
 % By:       Michael Jigo
 
-function fit_task1_likelihood(subj)
+function fit_task4_likelihood(subj)
    % add paths
    addpath(genpath('../../../modelCPD'));
    addpath(genpath('~/apps'));
    addpath(genpath('./helperfun'));
 
    % specify attention condition
-   attnType = 'neutral'; % only neutral condition will be analyzed here
+   attnType = 'neutral_saccade'; % only neutral condition will be analyzed here
 
    %% Set indices for loaded data matrix
       % matrix columns
-      % 1   block number
-      % 2   bandwidth                  (orientation bandwidth)
-      % 3   size                       (target patch size)
-      % 4   background orientation     (-45 or 45)
-      % 5   patch orientation          (-45 or 45)
-      % 6   cue ecc                    (0)
-      % 7   cue absolute ecc           (0)
-      % 8   target ecc                 (+-)
-      % 9   target absolute ecc        (+)
-      % 10  response cue ecc           (+-)
-      % 11  response cue absolute ecc  (+)
-      % 12  response                   (0=absent; 1=present)
-      % 13  accuracy                   (0=incorrect; 1=correct)
-      idx_targecc    = 9;
-      idx_respcue    = 11;
-      idx_resp       = 12;
-      idx_size       = 3;
+         % 1   block number
+         % 2   bandwidth                  (orientation bandwidth)
+         % 3   size                       (target patch size)
+         % 4   background orientation     (-45 or 45)
+         % 5   patch orientation          (-45 or 45)
+         % 6   cue ecc                    (0)
+         % 7   cue absolute ecc           (0)
+         % 8   target ecc                 (+-)
+         % 9   target absolute ecc        (+)
+         % 10  response cue ecc           (+-)
+         % 11  response cue absolute ecc  (+)
+         % 12  response                   (0=absent; 1=present)
+         % 13  accuracy                   (0=incorrect; 1=correct)
+            idx_block      = 1;
+            idx_targEcc    = 9;
+            idx_respCue    = 11;
+            idx_resp       = 12;
+            idx_size       = 3;
+            idx_bw         = 2;
+            idx_sacCue     = 7;
+            idx_sacLand    = 19;
 
 
    %% Load data
       % load subject data
-         subjdata = sprintf('../data/raw/task1/%s_Task1_resMat.mat',subj);
+         subjdata = sprintf('../data/raw/%s_Task4_resMat.mat',subj);
          load(subjdata);
          tmp = resMat;
 
       % parse data into necessary experiment variables
          data.subj               = subj;
          data.trials.response    = tmp(:,idx_resp);
-         data.trials.ecc         = tmp(:,idx_respcue);
+         data.trials.targEcc     = tmp(:,idx_respcue);
          data.trials.size        = tmp(:,idx_size);
          data.trials.presence    = tmp(:,idx_targecc);
          data.ecc                = unique(data.trials.ecc);
@@ -79,7 +89,6 @@ function fit_task1_likelihood(subj)
          sizes       = data.size;
          spacing_row = 0.3;
          spacing_col = 0.3;
-         sizes = [6 10];
          
 
       % generate textures
@@ -96,7 +105,6 @@ function fit_task1_likelihood(subj)
             stim(d).target(stim(d).target>1) = 1;
             stim(d).notarg(stim(d).notarg>1) = 1;
          end
-         keyboard
 
    
       % decompose images
@@ -156,3 +164,4 @@ function fit_task1_likelihood(subj)
       mkdir(savedir);
    end
    save(sprintf('%s%s.mat',savedir,subj),'out');
+

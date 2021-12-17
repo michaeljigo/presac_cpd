@@ -51,7 +51,6 @@ in = {'cg_max'
       'fix_with_input'};
 val = [repmat({[]},1,numel(in)-1) 0];
 start_params = parseOptionalInputs(in,val,varargin);
-rng('shuffle');
 
 
 

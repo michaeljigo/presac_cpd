@@ -25,6 +25,7 @@ function display_task1_dprime(subj)
       idx_resp       = 12;
       idx_size       = 3;
       idx_bw         = 2;
+      idx_sacCue     = 7;
 
       
    
@@ -35,7 +36,7 @@ function display_task1_dprime(subj)
       load(subjdata);
       data = resMat;
 
-      % remove some blocks from analysis
+      % remove first blocks from analysis
          data(data(:,idx_block)<=1,:) = [];
 
       % create trial labels for target presence (0=absent; 1=present)
@@ -65,6 +66,7 @@ function display_task1_dprime(subj)
          % size
             sz.val         = data(:,idx_size);
             sz.label       = cellfun(@num2str,num2cell(unique(sz.val)),'un',0);
+
 
      
 
@@ -120,7 +122,7 @@ function display_task1_dprime(subj)
       % save subject performance
          dprime      = allDPrime(s);
          criterion   = allCrit(s);
-         savedir = '../data/dprime/';
+         savedir = '../data/dprime/task1/';
          if ~exist(savedir,'dir')
             mkdir(savedir)
          end
@@ -133,10 +135,11 @@ function display_task1_dprime(subj)
          dprime    = allDPrime;
          criterion = allCrit;
 
+   %{
       % add in group-average of dprime
          if numel(subj)>1
             dprimeFields = fieldnames(dprime(1));
-            dprimeFields = setdiff(dprimeFields,{'subj'});
+            dprimeFields = setdiff(dprimeFields,{'subj' 'bw_ecc' 'bw_ecc_size'});
             for f = 1:numel(dprimeFields)
                if strcmp(dprimeFields{f},'overall')
                   dprime(numel(subj)+1).(dprimeFields{f})            = nanmean(arrayfun(@(x) reshape(x.(dprimeFields{f}),[1 size(x.(dprimeFields{f}))]),allDPrime,'un',1));  
@@ -161,6 +164,8 @@ function display_task1_dprime(subj)
             subj{numel(subj)+1} = 'average';
          end
 
+        %}
+
 
 
    %% Plot
@@ -173,12 +178,13 @@ function display_task1_dprime(subj)
       linewidth      = repmat(2,1,numel(subj));
       alphas         = ones(1,numel(subj));
       if numel(subj)>1
-         colors(end,:)  = [0 0 0];
-         alphas(end)    = 0.5;
-         linewidth(end) = 4;
+         %colors(end,:)  = [0 0 0];
+         %alphas(end)    = 0.5;
+         %linewidth(end) = 4;
       end
       % figure 1. eccentricity
-         figure('name','eccentricity','position',[109 395 232 221]);
+         %figure('name','eccentricity','position',[109 395 232 221]);
+         figure('name','eccentricity','position',[193 422 530 439]);
          for s = 1:numel(dprime)
             line(xlim,[0 0],'color',[0 0 0]+0.5,'linewidth',1.5); hold on
             legendlines(s) = plot(eccvals,dprime(s).targecc.perf,'-','linewidth',linewidth(s),'color',[colors(s,:) alphas(s)]); hold on
@@ -272,9 +278,9 @@ function display_task1_dprime(subj)
             end
             filename = sprintf('%secc_size.png',figdir);
             saveas(gcf,filename);
-
-
             return
+
+
       % figure 4. bandwidth x size (size subplots)
          xlim     = [60 150];
          xtick    = 0:30:210;
@@ -314,6 +320,7 @@ function display_task1_dprime(subj)
             end
             filename = sprintf('%sbandwidth_size.png',figdir);
             saveas(gcf,filename);
+            return
 
 
 
