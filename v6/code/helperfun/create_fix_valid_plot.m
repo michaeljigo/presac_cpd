@@ -7,6 +7,17 @@ function create_fix_valid_plot(data,subj)
       dprime      = data.dprime.fix_valid;
       criterion   = data.criterion.fix_valid;
 
+
+   %% Check if model fit has to be displayed
+      dispFit = 0;
+      if ~isempty(model.dprime)
+         dispFit = 1;
+
+         % average across all saccade targets for this plot
+            model.dprime = squeeze(mean(model.dprime,2));
+      end
+
+
    %% Plotting
       % visualization parameters
          ylim           = [-0.5 3];
