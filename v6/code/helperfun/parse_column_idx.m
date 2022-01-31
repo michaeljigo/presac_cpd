@@ -21,14 +21,16 @@ function idx = parse_columns
    % 15  sacEndREft_deg_col         saccade endpoint (deg re ft)
    % 16  sacEnd_PosCue_col          closest saccade target (re sac endpoint); 0,0.75,1.25,1.5
    % 17  sacEnd_PosTst_col          closest test location (re sac endpoint); 0:1.5:2*pref_ecc
+   % 18  sacTargMarkerEcc           saccade target marker eccentricity; subject-specific
 
-      idx.block         = 1;
-      idx.bw            = 2;
-      idx.size          = 3;
-      idx.sacEcc        = 7;
-      idx.patchEcc      = 9;
-      idx.respEcc       = 11;
-      idx.response      = 12;
-      idx.sacPatchEcc   = 17;
+      idx.block            = 1;
+      idx.bw               = 2;
+      idx.size             = 3;
+      idx.sacEcc           = 7;
+      idx.patchEcc         = 9;
+      idx.respEcc          = 11;
+      idx.response         = 12;
+      idx.sacPatchEcc      = 17;
+      idx.sacTargMarkerEcc = 18;
 
    
