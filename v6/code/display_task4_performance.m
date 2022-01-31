@@ -11,6 +11,17 @@ function display_task4_performance(subj)
       dprime      = data.dprime;
       criterion   = data.criterion;
 
+   %% Check if subject's data have been fit, if yes plot it
+      fitFile     = sprintf('../data/fitted_parameters/task4/%s.mat',subj);
+      if exist(fitFile,'file')
+         load(fitFile);
+         model.dprime= out.fineModel;
+         model.ecc   = out.data.fineEcc;
+         dispFit     = 1;
+      else
+         dispFit     = 0;
+      end
+
 
    %% Plot
       % Performance (each size in separate subplots)
@@ -22,7 +33,7 @@ function display_task4_performance(subj)
          colors         = [0 0 0; 0 0 0];
          linewidth      = 2;
 
-         figure('name','Sensitivity','position',[1 1 421 214]);
+         figure('name','Sensitivity','position',[1 1 651 310]);
          for s = 1:size(dprime.perf,1)
             subplot(1,size(dprime.perf,1),s)
 
@@ -30,7 +41,25 @@ function display_task4_performance(subj)
                line(xlim,[0 0],'linewidth',1.5,'color',colors(s,:)); hold on
 
             % plot Neutral condition only
-               plot(data.ecc,squeeze(dprime.perf(s,:)),'-','linewidth',linewidth,'color',colors(s,:)); hold on
+               if dispFit
+                  plot(model.ecc,model.dprime(s,:),'-','linewidth',linewidth,'color',colors(s,:)); hold on
+
+                  % add in line at peak eccentricity
+                     [peakD,peakEcc]   = max(model.dprime(s,:));
+                     peakEcc           = model.ecc(peakEcc); 
+                     line([peakEcc peakEcc],[0 peakD],'linewidth',linewidth/2,'color',colors(s,:));
+
+                  % add text specifying the peak eccentricity
+                     txt = text(peakEcc,0.5,sprintf('%s^o',num2str(peakEcc)));
+                     txt.FontSize            = 8; 
+                     txt.FontWeight          = 'bold';
+                     txt.Color               = colors(s,:);
+                     txt.FontName            = 'arial';
+                     txt.BackgroundColor     = 'w';
+                     txt.HorizontalAlignment = 'center';
+               else
+                  plot(data.ecc,squeeze(dprime.perf(s,:)),'-','linewidth',linewidth,'color',colors(s,:)); hold on
+               end
                % plot individual data points at corresponding size
                   for e = 1:numel(data.ecc)
                      plot(data.ecc(e),dprime.perf(s,e),'o','markersize',sizePerTrial*(squeeze(dprime.numtrials(s,e))./max(dprime.numtrials(:))),'markerFaceColor',colors(s,:),'markerEdgeColor','w');
