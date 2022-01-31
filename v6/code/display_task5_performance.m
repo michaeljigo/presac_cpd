@@ -2,7 +2,11 @@
 % By:       Michael Jigo
 %
 
-function display_task5_performance(subj)
+function display_task5_performance(subj,varargin)
+   %% Parse optional inputs
+      optionalIn  = {'spatial_profile' 'model_variant' 'show_fit'};
+      optionalVal = {'center_surround2DG' 'response_gain' 1};
+      model       = parseOptionalInputs(optionalIn,optionalVal,varargin);
    
    %% Load subject's behavior
       data        = load_subj_data(subj,'task5');
