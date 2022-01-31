@@ -5,7 +5,7 @@
 function dprime = fit_task4_objective_fineSpacing(stimdrive,supdrive,attn,observer,data,stim,config,params)
 
    %% re-scale parameters
-      [stimdrive supdrive attn observer config] = format_unformat_params_likelihood(config,params',stimdrive,supdrive,attn,observer);
+      [stimdrive supdrive attn observer config] = format_unformat_params(config,params',stimdrive,supdrive,attn,observer);
 
 
    %% evaluate moel on all sizes and eccentricities 
@@ -24,6 +24,6 @@ function dprime = fit_task4_objective_fineSpacing(stimdrive,supdrive,attn,observ
       %dprime       = dprime*scalar;
 
    %% scale separately for each size x ecc combination
-      scalar         = mean(data.dprime.size_ecc.perf,2)./mean(dprime,2);
+      scalar         = mean(data.dprime.perf,2)./mean(dprime,2);
       dprime         = dprime.*scalar;
 
