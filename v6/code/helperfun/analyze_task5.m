@@ -13,12 +13,11 @@ function analyze_task5(subj)
 
 
    %% Do some data preprocessing
-      % remove training (1st block) from analysis
-         data(data(:,idx.block)<=1,:) = [];
-
+   if size(data,2)<=idx.sacTargMarkerEcc
       % create a new column in the matrix that re-codes fixation trials in terms of the saccade cue shown on that block
          newData  = data;
-         newData(:,size(data,2)+1) = data(:,idx.sacEcc);
+         %newData(:,size(data,2)+1) = data(:,idx.sacEcc);
+         newData(:,idx.sacTargMarkerEcc) = data(:,idx.sacEcc);
          blocks   = unique(data(:,idx.block));
          for b = 1:numel(blocks)
             % get block index
@@ -28,10 +27,18 @@ function analyze_task5(subj)
                whichSac = whichSac(whichSac>0);
             % replace fixation index (0) with saccade cue eccentricity
                newFix   = whichSac;
-               newData(blockIdx & data(:,idx.sacEcc)==0,size(data,2)+1) = newFix;
+               newData(blockIdx & data(:,idx.sacEcc)==0,idx.sacTargMarkerEcc) = newFix;
          end
-         data = newData;
-         idx.newFixEcc = size(data,2);
+         % overwrite resMat with new matrix with newFixEcc
+            resMat   = newData;
+            save([dataDir,filename],'resMat');
+         % update data matrix
+            data     = newData;
+   end
+
+      % remove training (1st block) from analysis
+         data(data(:,idx.block)<=1,:) = [];
+         %data(data(:,idx.block)>=18,:) = [];
 
 
 
@@ -66,7 +73,7 @@ function analyze_task5(subj)
          sacFix.label      = {'fixation' 'saccade'};
 
       % saccade target eccentricity (i.e., eccentricity of small gray dots on a given block)
-         sacTarg.val       = data(:,end);
+         sacTarg.val       = round(data(:,idx.sacTargMarkerEcc)*1e3)./1e3;
          sacTarg.label     = cellfun(@num2str,num2cell(unique(sacTarg.val)),'UniformOutput',0);  
      
 
@@ -107,6 +114,7 @@ function analyze_task5(subj)
          behavior.dprime      = dprime;
          behavior.criterion   = criterion;
          behavior.ecc         = unique(respEcc.val);
+         behavior.size        = unique(data(:,idx.size));
          behavior.saccadeTarg = unique(sacTarg.val);
          behavior.validity    = valInval.label;
          behavior.dataMat     = data;
