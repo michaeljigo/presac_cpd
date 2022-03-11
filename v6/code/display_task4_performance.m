@@ -25,7 +25,7 @@ function display_task4_performance(subj)
 
    %% Plot
       % Performance (each size in separate subplots)
-         ylim           = [-0.5 3];
+         ylim           = [-0.5 5];
          ytick          = -10:1:10;
          xlim           = [-1 14];
          xtick          = 0:4:20;
